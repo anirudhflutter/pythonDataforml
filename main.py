@@ -4,7 +4,7 @@ import json
 import os
 import pymongo
 from opencage.geocoder import OpenCageGeocode
-
+from geopy.distance import geodesic
 
 app = Flask(__name__)
 
@@ -135,14 +135,25 @@ def AllMandis():
     return jsonify({"Data": GetAllMandis})
 
 
-@app.route('/getLatLongOfMandi')
-def getLatLongOfMandi():
+def CalculateDistance(CurrentLat,CurrentLong,mandilat,mandilng):
+    return geodesic((float(CurrentLat),float(CurrentLong)),(float(mandilat),float(mandilng))).km
+
+
+@app.route('/getLatLongOfMandiAndDistance')
+def getLatLongOfMandiAndDistance():
     MandiName = request.args.get('MandiName')
-    return jsonify({"Lat":getLat(MandiName,"Maharashtra"),
-                "Lng":getLong(MandiName,"Maharashtra"),})
+    CurrentLat = request.args.get('Currentlat')
+    CurrentLong = request.args.get('CurrentLong')
+    mandilat = getLat(MandiName,"Maharashtra")
+    mandilng = getLong(MandiName,"Maharashtra")
+    return jsonify({
+        "Lat":mandilat,
+                "Lng":mandilng,
+        "Distance" : str(CalculateDistance(CurrentLat,CurrentLong,mandilat,mandilng)) + "km"
+    })
 
 
-port = int(os.environ.get("PORT", 80))
+port = int(os.environ.get("PORT", 5000))
 
 
 if __name__ == '__main__':
