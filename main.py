@@ -3,6 +3,7 @@ from flask import request
 import json
 import os
 import pymongo
+from opencage.geocoder import OpenCageGeocode
 
 
 app = Flask(__name__)
@@ -79,6 +80,33 @@ def getuserselectedmandi():
 
 GetAllMandis = []
 
+
+key = "4af24b047562473cba60c07d6f9ff9ff"
+
+
+def getLat(place,state):
+    geocoder = OpenCageGeocode(key)
+
+    query = place + ", " + state
+
+    results = geocoder.geocode(query)
+
+    lat = results[0]['geometry']['lat']
+
+    return lat
+
+
+def getLong(place, state):
+    geocoder = OpenCageGeocode(key)
+
+    query = place + ", " + state
+
+    results = geocoder.geocode(query)
+
+    lng = results[0]['geometry']['lng']
+
+    return lng
+
 def getAllMandis():
     client = pymongo.MongoClient("mongodb+srv://root:root@cluster0.s73xs.mongodb.net/test")
 
@@ -96,10 +124,9 @@ def getAllMandis():
         if mandiname not in GetAllMandis:
             GetAllMandis.append({
                 "mandiname":mandiname,
-                "id":mandiid
+                "id":mandiid,
             })
     return mandiname
-
 
 
 @app.route('/getAllMandis')
@@ -107,7 +134,14 @@ def AllMandis():
     return jsonify({"Data": GetAllMandis})
 
 
-port = int(os.environ.get("PORT", 80))
+@app.route('/getLatLongOfMandi')
+def getLatLongOfMandi():
+    MandiName = request.args.get('MandiName')
+    return jsonify({"Lat":getLat(MandiName,"Maharashtra"),
+                "Lng":getLong(MandiName,"Maharashtra"),})
+
+
+port = int(os.environ.get("PORT", 5000))
 
 
 if __name__ == '__main__':
@@ -116,4 +150,4 @@ if __name__ == '__main__':
     # date = str(today).split("-")
     # currentdate = date[2] + "/" + date[1] + "/" + date[0]
     # yesterdaydate = str(int(date[2]) - 1) + "/" + date[1] + "/" + date[0]
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, port=port)
