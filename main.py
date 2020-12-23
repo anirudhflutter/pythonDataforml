@@ -131,6 +131,7 @@ def getAllMandis():
 
 @app.route('/getAllMandis')
 def AllMandis():
+    getAllMandis()
     return jsonify({"Data": GetAllMandis})
 
 
@@ -141,13 +142,12 @@ def getLatLongOfMandi():
                 "Lng":getLong(MandiName,"Maharashtra"),})
 
 
-port = int(os.environ.get("PORT", 5000))
+port = int(os.environ.get("PORT", 80))
 
 
 if __name__ == '__main__':
-    getAllMandis()
     # today = date.today()
     # date = str(today).split("-")
     # currentdate = date[2] + "/" + date[1] + "/" + date[0]
     # yesterdaydate = str(int(date[2]) - 1) + "/" + date[1] + "/" + date[0]
-    app.run(debug=True, port=port)
+    app.run(debug=True, host="0.0.0.0",port=port)
