@@ -116,4 +116,4 @@ if __name__ == '__main__':
     # date = str(today).split("-")
     # currentdate = date[2] + "/" + date[1] + "/" + date[0]
     # yesterdaydate = str(int(date[2]) - 1) + "/" + date[1] + "/" + date[0]
-    app.run(debug=True, host='192.168.29.54', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
