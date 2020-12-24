@@ -1,6 +1,7 @@
 from flask import jsonify,Flask
 from flask import request
 import json
+import requests
 import os
 import pymongo
 from opencage.geocoder import OpenCageGeocode
@@ -14,6 +15,15 @@ from datetime import date
 
 MandiListForAll = []
 
+# def Sendlatlongtomonil(mandiname, lat,long):
+#     url = 'http://13.234.119.95/api/mandi/updateMandi'
+#     myobj = {
+#         "mandiName": str(mandiname),
+#         "lat": str(lat),
+#         "long": str(long),
+#     }
+#     x = requests.post(url, data=myobj)
+#     print(x)
 
 def GetMandiForAll(mandiname,path):
     MandiListForAll.clear()
@@ -126,6 +136,13 @@ def getAllMandis():
                 "mandiname":mandiname,
                 "id":mandiid,
             })
+            # lat = getLat(mandiname, "Maharashtra")
+            # long = getLong(mandiname,"Maharashtra")
+            # print(mandiname)
+            # print(lat)
+            # print(long)
+            # Sendlatlongtomonil(mandiname,lat,long)
+
     return mandiname
 
 
@@ -139,24 +156,25 @@ def CalculateDistance(CurrentLat,CurrentLong,mandilat,mandilng):
     return geodesic((float(CurrentLat),float(CurrentLong)),(float(mandilat),float(mandilng))).km
 
 
-@app.route('/getLatLongOfMandiAndDistance')
-def getLatLongOfMandiAndDistance():
-    MandiName = request.args.get('MandiName')
-    CurrentLat = request.args.get('Currentlat')
-    CurrentLong = request.args.get('CurrentLong')
-    mandilat = getLat(MandiName,"Maharashtra")
-    mandilng = getLong(MandiName,"Maharashtra")
-    return jsonify({
-        "Lat":mandilat,
-                "Lng":mandilng,
-        "Distance" : str(CalculateDistance(CurrentLat,CurrentLong,mandilat,mandilng)) + "km"
-    })
+# @app.route('/getLatLongOfMandiAndDistance')
+# def getLatLongOfMandiAndDistance():
+#     MandiName = request.args.get('MandiName')
+#     CurrentLat = request.args.get('Currentlat')
+#     CurrentLong = request.args.get('CurrentLong')
+#     mandilat = getLat(MandiName,"Maharashtra")
+#     mandilng = getLong(MandiName,"Maharashtra")
+#     return jsonify({
+#         "Lat":mandilat,
+#                 "Lng":mandilng,
+#         "Distance" : str(CalculateDistance(CurrentLat,CurrentLong,mandilat,mandilng)) + "km"
+#     })
 
 
-port = int(os.environ.get("PORT", 5000))
+port = int(os.environ.get("PORT", 80))
 
 
 if __name__ == '__main__':
+    getAllMandis()
     # today = date.today()
     # date = str(today).split("-")
     # currentdate = date[2] + "/" + date[1] + "/" + date[0]
